@@ -73,11 +73,42 @@ void BezierCurve::setActiveT(float t)
 }
 
 // Object using methods.
-// Find and set the nearest t;
-void BezierCurve::findT()
+// Return the interpolated coordinate at parameter t.
+Eigen::Vector3d BezierCurve::getCoordinate(float t)
 {
-  // Iterate trough all points in a resolution of 0.1.
-  // Iterate trough all points in a resolution of 0.01.
+  float x_interpolated = 0.0;
+  float y_interpolated = 0.0;
+  Eigen::Vector3d coordinate_to_return;
+  int n = *this.numb_ctr_points_;
+  for(int i = 0; i < n + 1; i++)
+  {
+    float factor = pow(t, i)*pow(1.0 - t, n - i);
+    x_interpolated = x_interpolated + *this.x_path_[i]*this->BezierCurve::binomial(*this.numb_ctr_points_ - 1, i)*factor;
+    y_interpolated = y_interpolated + *this.y_path_[i]*this->BezierCurve::binomial(*this.numb_ctr_points_ -1, i)*factor;
+  }
+  coordinate_to_return[0] = x_interpolated;
+  coordinate_to_return[1] = y_interpolated;
+  return coordinate_to_return;
+}
+// Find and set the nearest t;
+void BezierCurve::findNearestT()
+{
+  float x_curr_arr_position = *this.x_path_[i];
+  float y_curr_arr_position = *this.y_path_[i];
+  float t_near_iteration = 0.0;
+  float error = 1000.0;
+
+  for (float t = 0.0, t < 1.001; t = t + 0.001)
+  {
+    Eigen::Vector3d returned_coordinate = this->BezierCurve::getCoordinate(t);
+    float error_i = sqrt(pow(x_curr_arr_position - returned_coordinate[0], 2) + pow(y_curr_arr_position - returned_coordinate[1], 2));
+    if (error_i < error)
+    {
+      error = error_i
+      t_near_iteration = t;
+    }
+  }
+  *this.nearest_t_ = t_near_iteration;
 }
 //
 void BezierCurve::calcCurvature()
@@ -102,7 +133,7 @@ void BezierCurve::calcXyDot(float t)
 {
   float x_dot = 0.0;
   float y_dot = 0.0;
-  int n = *this.numb_ctr_points_;
+  int n = *this.numb_ctr_points_ - 1;
 
   for(int i = 0; i < n + 1; i++)
   {
@@ -118,7 +149,7 @@ void BezierCurve::calcXyDotDot(float t)
 {
   float x_dot_dot = 0.0;
   float y_dot_dot = 0.0;
-  int n = *this.numb_ctr_points_;
+  int n = *this.numb_ctr_points_ - 1;
 
   for(int i = 0; i < n + 1; i++)
   {

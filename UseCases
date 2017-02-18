@@ -1,0 +1,26 @@
+Use Cases
+
+CASE 1: Im PurePursuit: Gib die current_arrayposition (in der Nähe zum State) und den state und erhalte die Krümmung in Nähe des State.
+// 1. Was muss bereit stehen?
+
+// Der Pfad
+nav_msgs::Path my_path;
+// Die Anzahl Kontrollpunkte (kann für immer fix sein oder später dynamisch geändert werden).
+int n_ctrl_pts;
+
+
+// 2. Im Konstruktor
+
+// Erzeuge ein Objekt der BezierCurve-Klasse und übergebe den Pfad und Anzahl Kontrollpunkte.
+BezierCurve myBezier(my_path, numb_ctr_points);
+
+// 3. In irgendeiner Methode.
+// Übergebe z.B die current_arrayposition und erhalte die Krümmung Punkt des current_arrayposition.
+float kruemmung;
+int current_arrayposition;
+while(something)
+{
+  kruemmung = myBezier.getCurvature(current_arrayposition);
+}
+
+CASE 2: Man übergibt z.B im PurePursuit einen Index im Pfad und man erhält einen Winkel zurück.

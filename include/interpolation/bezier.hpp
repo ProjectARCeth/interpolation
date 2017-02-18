@@ -31,7 +31,7 @@ class BezierCurve{
     // Return de interpolated coordinate at parameter t.
     Eigen::Vector3d getCoordinate(float t);
     // Find and set the nearest t;
-    void findNearestT();
+    void findNearestT(int path_index);
     // For a defined bezier-curve, find the nearest t and the use calcCurvature(float t). Will be useful for pure-pursuit.
     void calcCurvature();
     // For a defined bezier-curve and a given parameter t, calculate and set the curvature.

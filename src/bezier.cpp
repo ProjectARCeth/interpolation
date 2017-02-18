@@ -91,10 +91,10 @@ Eigen::Vector3d BezierCurve::getCoordinate(float t)
   return coordinate_to_return;
 }
 // Find and set the nearest t;
-void BezierCurve::findNearestT()
+void BezierCurve::findNearestT(int path_index)
 {
-  float x_curr_arr_position = *this.x_path_[i];
-  float y_curr_arr_position = *this.y_path_[i];
+  float x_curr_arr_position = *this.x_path_[path_index];
+  float y_curr_arr_position = *this.y_path_[path_index];
   float t_near_iteration = 0.0;
   float error = 1000.0;
 
@@ -110,10 +110,10 @@ void BezierCurve::findNearestT()
   }
   *this.nearest_t_ = t_near_iteration;
 }
-//
+// For the defined bezier curve find the curvature nearest to center_index_.
 void BezierCurve::calcCurvature()
 {
-  this->BezierCurve::findT();
+  this->BezierCurve::findT(center_index_);
   *this.active_t_ = *this.nearest_t_;
   this->calcCurvature(*this.active_t_);
 }
@@ -138,12 +138,12 @@ void BezierCurve::calcXyDot(float t)
   for(int i = 0; i < n + 1; i++)
   {
     float dot_factor = i*pow(t, i - 1)*pow(1.0 - t, n - i) + pow(t, i)*(i - n)*pow(1.0 - t, n - i - 1) ;
-    x_dot = x_dot + x_path_[i]*BezierCurve::binomial(numb_ctr_points_ - 1, i)*dot_factor;
-    y_dot = y_dot + y_path_[i]*BezierCurve::binomial(numb_ctr_points_ - 1, i)*dot_factor;
+    x_dot = x_dot + *this.x_path_[i]*this->BezierCurve::binomial(n, i)*dot_factor;
+    y_dot = y_dot + *this.y_path_[i]*this->BezierCurve::binomial(n, i)*dot_factor;
   }
 
-  x_dot_ = x_dot;
-  y_dot_ = y_dot;
+  *this.x_dot_ = x_dot;
+  *this.y_dot_ = y_dot;
 }
 void BezierCurve::calcXyDotDot(float t)
 {
@@ -157,12 +157,12 @@ void BezierCurve::calcXyDotDot(float t)
     + i*pow(t, i - 1)*(i - n)*pow(n - i - 1)
     + i*pow(t, i - 1)*(i - n)*pow(1.0 - t, n - i - 1)
     + pow(t, i)*(n - i)*(n - i - 1)*(-1.0)*pow(1.0 - t, n - i - 2);
-    x_dot_dot = x_dot_dot + x_path_[i]*BezierCurve::binomial(numb_ctr_points_ - 1, i)*dot_dot_factor;
-    y_dot_dot = y_dot_dot + y_path_[i]*BezierCurve::binomial(numb_ctr_points_ - 1, i)*dot_dot_factor;
+    x_dot_dot = x_dot_dot + x_path_[i]*this->BezierCurve::binomial(n, i)*dot_dot_factor;
+    y_dot_dot = y_dot_dot + y_path_[i]*this->BezierCurve::binomial(n, i)*dot_dot_factor;
   }
 
-  x_dot_dot_ = x_dot_dot;
-  y_dot_dot_ = y_dot_dot;
+  *this.x_dot_dot_ = x_dot_dot;
+  *this.y_dot_dot_ = y_dot_dot;
 }
 float BezierCurve::getCurvature
 {
